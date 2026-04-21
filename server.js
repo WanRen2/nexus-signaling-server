@@ -34,7 +34,7 @@ const io = new Server(server, {
 });
 
 // JWT_SECRET from environment or default
-const JWT_SECRET = process.env.JWT_SECRET || 'nexus-dev-secret-key-12345';
+const JWT_SECRET = process.env.JWT_SECRET || 'a955e3a145cac858158d8d62566a9b67';
 
 // Track active rooms and users
 const rooms = new Map(); // roomId -> Set<socketId>
