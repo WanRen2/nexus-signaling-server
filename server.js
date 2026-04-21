@@ -33,7 +33,7 @@ const io = new Server(server, {
   transports: ['polling', 'websocket']
 });
 
-// JWT_SECRET from environment or default
+// JWT_SECRET from environment
 const JWT_SECRET = process.env.JWT_SECRET || 'a955e3a145cac858158d8d62566a9b67';
 
 // Track active rooms and users
@@ -87,6 +87,24 @@ io.on('connection', (socket) => {
     // Send room info to joining user
     const roomUsers = Array.from(rooms.get(roomId)).filter(id => id !== socket.id);
     socket.emit('room-joined', { roomId, users: roomUsers });
+  });
+
+  // Get online users
+  socket.on('get-online-users', () => {
+    const user = users.get(socket.id);
+    if (!user) return;
+
+    const onlineUsers = Array.from(users.values())
+      .filter(u => u.userId !== user.userId)
+      .map(u => u.userId);
+    
+    socket.emit('online-users', { users: onlineUsers });
+    console.log(`[${socket.id}] Sent online users: ${onlineUsers.length}`);
+  });
+
+  // Ping handler
+  socket.on('ping', () => {
+    socket.emit('pong');
   });
 
   // WebRTC signaling: offer
